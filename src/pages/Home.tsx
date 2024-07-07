@@ -33,7 +33,7 @@ const Home: React.FC<HomePageProps> = ( {users} ) => {
               {users.map((user, index) => (
                 <tr key={index}>
                   <td>
-                  {user.image && <img src={user.image} style={{ maxWidth: '100px', height: 'auto' }} />}
+                  {user.imageUrl && <img src={user.imageUrl} style={{ maxWidth: '100px', height: 'auto' }} />}
                   </td>
                   <td>{user.firstName}</td>
                   <td>{user.lastName}</td>

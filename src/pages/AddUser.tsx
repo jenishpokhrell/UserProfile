@@ -12,7 +12,7 @@ interface UserForm {
 
 const AddUser:React.FC<UserForm> = ({onSubmit}) => {
   const [user, setUser] = useState<IUsers>({
-    image: '',
+    imageUrl: '',
     firstName: '',
     lastName: '',
     email: '',
@@ -29,7 +29,7 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
   const [loading, setLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false)
   const [image, setImage] = useState(null)
-  const [imageUrl, setImageUrl] = useState<string>('')
+  const [imageUrl, setImageUrl] = useState('')
   const redirect = useNavigate()
 
 
@@ -56,10 +56,12 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
   }
 
   const handleImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const image = event.target.files?.[0];
-    if (image) {
-      setImage(image)
-      setImageUrl(URL.createObjectURL(image))
+    const file = event.target.files[0];
+    if (file) {
+      setImage(file)
+      const imageUrl = (URL.createObjectURL(file))
+      setImageUrl(imageUrl);
+      setUser({...user, imageUrl})
     }
   }
 
@@ -81,7 +83,7 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
     event.preventDefault();
     onSubmit(user);
     setUser({
-      image: '', firstName: '', lastName: '', email: '', phoneNo: '', birthDate: '', city: '', district: '', province: '1', country: 'Nepal',
+      imageUrl: '', firstName: '', lastName: '', email: '', phoneNo: '', birthDate: '', city: '', district: '', province: '1', country: '',
     })
     redirect('/');
     Swal.fire({
@@ -89,7 +91,7 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
       icon: "success",
       title: "User Created successfully",
       showConfirmButton: false,
-      timer: 1500
+      timer: 3000
     });
   }
   return (
@@ -217,9 +219,8 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
               inputProps={{ accept: 'image/png' }}
               onChange={handleImage}
               sx={{ width: 250, border: "none" }}
-              // value={user.image}
             />
-            {image && <img src={image} alt='img' style={{ maxWidth: '0%', height: 'auto', border: 'none' }} />}
+            {imageUrl && <img src={imageUrl} alt='img'  style={{ maxWidth: '0%', height: 'auto'}} />}
           </div>
           <Button
             sx={{ width: 150, p: 1.5, ml:22, mt:7 }}

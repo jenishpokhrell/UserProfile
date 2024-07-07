@@ -1,5 +1,5 @@
 export interface IUsers{
-    image: string;
+    imageUrl: string;
     firstName: string;
     lastName: string;
     email: string;
