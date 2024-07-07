@@ -1,44 +1,46 @@
-import { useState } from 'react'
-import Navbar from '../components/Navbar'
 import { IUsers } from '../types/global.typing'
-import AddUser from './AddUser'
 
-const Home: React.FC = () => {
+interface HomePageProps {
+    users: IUsers[];
+}
 
-
-  const [users, setUsers] = useState<IUsers[]>([])
-
-  const handleAddUser = (user: IUsers) => {
-    setUsers([...users, user])
-  }
+const Home: React.FC<HomePageProps> = ( {users} ) => {
+  
   return (
     <div>
-      <Navbar />
       <div className='w-full'>
         <div>
           <h1 className=' text-center text-4xl font-bold m-10'>Users</h1>
         </div>
+        {
+          users.length === 0 ? (<h1 className='text-center text-4xl font-bold mt-32'>No Users</h1>) : (
+
         <div className='table-wrapper'>
-        {/* <AddUser onSubmit={handleAddUser} /> */}
           <table>
             <thead>
               <tr>
+                <th>Image</th>
                 <th>First Name</th>
                 <th>Second Name</th>
                 <th>Email</th>
                 <th>Phone no.</th>
                 <th>City</th>
+                <th>Province</th>
                 <th>Country</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user, index) => (
                 <tr key={index}>
+                  <td>
+                  {user.image && <img src={user.image} style={{ maxWidth: '100px', height: 'auto' }} />}
+                  </td>
                   <td>{user.firstName}</td>
                   <td>{user.lastName}</td>
                   <td>{user.email}</td>
                   <td>{user.phoneNo}</td>
                   <td>{user.city}</td>
+                  <td>{user.province}</td>
                   <td>{user.country}</td>
                 </tr>
               ))}
@@ -46,6 +48,8 @@ const Home: React.FC = () => {
 
           </table>
         </div>
+          ) 
+        }
       </div>
 
       {/* <div className='text-center text-4xl mt-10'>

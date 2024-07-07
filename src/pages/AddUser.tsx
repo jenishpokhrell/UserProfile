@@ -1,5 +1,4 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
 import { FormControl, TextField, InputLabel, Select, MenuItem, FormHelperText, Menu, CircularProgress, Button, Input } from "@mui/material"
 import axios from "axios";
 import { useEffect, useState } from "react"
@@ -21,18 +20,19 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
     birthDate: '',
     city: '',
     district: '',
-    province: '',
-    country: '',
+    province: '1',
+    country: 'Nepal',
   });
 
-  const [option, setOption] = useState();
   const [countries, setCountries] = useState([])
   const [selectedCountry, setSelectedCountry] = useState('Nepal');
   const [loading, setLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false)
   const [image, setImage] = useState(null)
-  const [imageUrl, setImageUrl] = useState(null)
+  const [imageUrl, setImageUrl] = useState<string>('')
   const redirect = useNavigate()
+
+
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -55,8 +55,8 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
     setIsDisabled(selected !== 'Nepal');
   }
 
-  const handleImage = (event) => {
-    const image = event.target.files[0];
+  const handleImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const image = event.target.files?.[0];
     if (image) {
       setImage(image)
       setImageUrl(URL.createObjectURL(image))
@@ -76,11 +76,12 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
         title: "Oops...",
         text: "You need to enter required values.",
       });
+      return;
     }
     event.preventDefault();
     onSubmit(user);
     setUser({
-      image: '', firstName: '', lastName: '', email: '', phoneNo: '', birthDate: '', city: '', district: '', province: '', country: '',
+      image: '', firstName: '', lastName: '', email: '', phoneNo: '', birthDate: '', city: '', district: '', province: '1', country: 'Nepal',
     })
     redirect('/');
     Swal.fire({
@@ -93,7 +94,6 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
   }
   return (
     <div>
-      <Navbar />
       <div className='text-center text-3xl font-bold m-10'>
         <h1>Add User</h1>
       </div>
@@ -169,36 +169,33 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
                 onChange={changeHandler} required />
             </div>
             <div className=" flex justify-center items-center">
-              <FormControl
-                sx={{ mt: 6, ml: 2, width: 330 }}
-                disabled={isDisabled}
-                value={user?.province}
-                onChange={changeHandler} required>
+              <FormControl sx={{ mt: 6, ml: 2, width: 330 }} disabled={isDisabled} required>
                 <InputLabel> Province </InputLabel>
                 <Select
-                  value={option}
+                  name='province'
+                  value={user.province}
                   label="Option"
+                  onChange={changeHandler}
                 >
-                  <MenuItem value={1}>1</MenuItem>
-                  <MenuItem value={2}>2</MenuItem>
-                  <MenuItem value={3}>3</MenuItem>
-                  <MenuItem value={4}>4</MenuItem>
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={6}>6</MenuItem>
-                  <MenuItem value={7}>7</MenuItem>
+                  <MenuItem value="1">1</MenuItem>
+                  <MenuItem value='2'>2</MenuItem>
+                  <MenuItem value='3'>3</MenuItem>
+                  <MenuItem value='4'>4</MenuItem>
+                  <MenuItem value='5'>5</MenuItem>
+                  <MenuItem value='6'>6</MenuItem>
+                  <MenuItem value='7'>7</MenuItem>
                 </Select>
                 <FormHelperText
                   sx={{ fontSize: 15, fontWeight: 'bold' }}>*Only for people residing in Nepal</FormHelperText>
               </FormControl>
-              <FormControl sx={{ mt: 6, ml: 5, width: 330 }}
-                value={user?.country}
-                onChange={changeHandler} required>
+              <FormControl sx={{ mt: 6, ml: 5, width: 330 }} required>
                 <InputLabel> Country </InputLabel>
                 {loading ? (
                   <CircularProgress />) : (
                   <Select
                     sx={{ overflow: scroll }}
-                    value={selectedCountry}
+                    name='country'
+                    value={user.country}
                     label="Country"
                     onChange={handleChange}
                   >
@@ -220,9 +217,9 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
               inputProps={{ accept: 'image/png' }}
               onChange={handleImage}
               sx={{ width: 250, border: "none" }}
-
+              // value={user.image}
             />
-            {imageUrl && <img src={imageUrl} style={{ maxWidth: '0%', height: '0', border: 'none' }} />}
+            {image && <img src={image} alt='img' style={{ maxWidth: '0%', height: 'auto', border: 'none' }} />}
           </div>
           <Button
             sx={{ width: 150, p: 1.5, ml:22, mt:7 }}
