@@ -3,35 +3,15 @@ import { FormControl, TextField, InputLabel, Select, MenuItem, FormHelperText, M
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
-import { IUsers } from "../types/global.typing";
-import Swal from "sweetalert2";
 
-interface UserForm {
-  onSubmit: (user: IUsers) => void;
-}
+const EditUser = () => {
 
-const AddUser:React.FC<UserForm> = ({onSubmit}) => {
-  const [user, setUser] = useState<IUsers>({
-    imageUrl: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phoneNo: '',
-    birthDate: '',
-    city: '',
-    district: '',
-    province: '',
-    country: 'Nepal',
-  });
-
-  const [countries, setCountries] = useState<{ name: { common: string }; cca3: string }[]>([]);
+  const [loading, setLoading] = useState(true)
+  const [countries, setCountries] = useState([])
   const [selectedCountry, setSelectedCountry] = useState('Nepal');
-  const [loading, setLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false)
-  const [image, setImage] = useState(null)
-  const [imageUrl, setImageUrl] = useState('')
-  const redirect = useNavigate()
 
+  const redirect = useNavigate()
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -53,58 +33,19 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
     const selected = event.target.value;
     setSelectedCountry(selected);
     setIsDisabled(selected !== 'Nepal');
-    setUser({
-      ...user,
-      [event.target.name]: event.target.value
-    })
   }
 
-  const handleImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImage(file)
-      const imageUrl = (URL.createObjectURL(file))
-      setImageUrl(imageUrl);
-      setUser({...user, imageUrl})
-    }
+  const handleBack = () => {
+    redirect('/')
   }
 
-  const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUser({
-      ...user,
-      [event.target.name]: event.target.value
-    })
-  }
-  const handleSubmit = (event: React.FormEvent) => {
-    if (user.firstName === '' || user.lastName === '' || user.email === '' || user.phoneNo === '') {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "You need to enter required values.",
-      });
-      return;
-    }
-    event.preventDefault();
-    onSubmit(user);
-    setUser({
-      imageUrl: '', firstName: '', lastName: '', email: '', phoneNo: '', birthDate: '', city: '', district: '', province: '', country: 'Nepal',
-    })
-    redirect('/');
-    Swal.fire({
-      position: "top-end",
-      icon: "success",
-      title: "User Created successfully",
-      showConfirmButton: false,
-      timer: 3000
-    });
-  }
   return (
     <div>
       <div className='text-center text-3xl font-bold m-10'>
-        <h1>Add User</h1>
+        <h1>Edit User</h1>
       </div>
       <div>
-        <form onSubmit={handleSubmit}>
+        <form>
           <div className=" ml-40">
             <TextField
               margin="normal"
@@ -113,8 +54,9 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
               label="First Name"
               name="firstName"
               variant="outlined"
-              value={user?.firstName}
-              onChange={changeHandler} required />
+              // value={user?.firstName}
+              // onChange={changeHandler} 
+              required />
             <TextField
               margin="normal"
               sx={{ m: 2 }}
@@ -122,8 +64,9 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
               label="Last Name"
               name="lastName"
               variant="outlined"
-              value={user?.lastName}
-              onChange={changeHandler} required />
+              // value={user?.lastName}
+              // onChange={changeHandler} 
+              required />
             <TextField
               margin="normal"
               sx={{ m: 2 }}
@@ -131,8 +74,9 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
               label="Email"
               name="email"
               variant="outlined"
-              value={user?.email}
-              onChange={changeHandler} required />
+              // value={user?.email}
+              // onChange={changeHandler} 
+              required />
             <TextField
               margin="normal"
               sx={{ m: 2 }}
@@ -140,8 +84,9 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
               label="Phone no."
               name="phoneNo"
               variant="outlined"
-              value={user?.phoneNo}
-              onChange={changeHandler} required />
+              // value={user?.phoneNo}
+              // onChange={changeHandler} 
+              required />
             <TextField
               margin="normal"
               sx={{ m: 2 }}
@@ -149,8 +94,9 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
               label="DOB"
               name="birthDate"
               variant="outlined"
-              value={user?.birthDate}
-              onChange={changeHandler} required />
+              // value={user?.birthDate}
+              // onChange={changeHandler} 
+              required />
           </div>
           <div className=" flex ml-40">
             <div>
@@ -162,8 +108,9 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
                 label="City"
                 name="city"
                 variant="outlined"
-                value={user?.city}
-                onChange={changeHandler} required />
+                // value={user?.city}
+                // onChange={changeHandler} 
+                required />
               <TextField
                 margin="normal"
                 sx={{ m: 2 }}
@@ -171,17 +118,20 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
                 label="District/State"
                 name="district"
                 variant="outlined"
-                value={user?.district}
-                onChange={changeHandler} required />
+                // value={user?.district}
+                // onChange={changeHandler} 
+                required />
             </div>
             <div className=" flex justify-center items-center">
-              <FormControl sx={{ mt: 6, ml: 2, width: 330 }} disabled={isDisabled} required>
+              <FormControl sx={{ mt: 6, ml: 2, width: 330 }} 
+              disabled={isDisabled} 
+              required>
                 <InputLabel> Province </InputLabel>
                 <Select
                   name='province'
-                  value={user.province}
+                  // value={user.province}
                   label="Option"
-                  onChange={changeHandler}
+                  // onChange={changeHandler}
                 >
                   <MenuItem value="1">1</MenuItem>
                   <MenuItem value='2'>2</MenuItem>
@@ -192,7 +142,7 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
                   <MenuItem value='7'>7</MenuItem>
                 </Select>
                 <FormHelperText
-                  sx={{ fontSize: 15, fontWeight: 'bold', color:'red',  fontStyle:'italic' }}>*Only for people residing in Nepal</FormHelperText>
+                  sx={{ fontSize: 15, fontWeight: 'bold' }}>*Only for people residing in Nepal</FormHelperText>
               </FormControl>
               <FormControl sx={{ mt: 6, ml: 5, width: 330 }} required>
                 <InputLabel> Country </InputLabel>
@@ -201,9 +151,9 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
                   <Select
                     sx={{ overflow: scroll }}
                     name='country'
-                    value={user.country}
+                    // value={user.country}
                     label="Country"
-                    onChange={handleChange}
+                    // onChange={handleChange}
                   >
                     {countries.map((country) => (
                       <MenuItem key={country.cca3} value={country.name.common}>
@@ -220,18 +170,25 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
             <p className=" text-2xl font-semibold mb-4">Your Image</p>
             <Input
               type="file"
-              inputProps={{ accept: 'image/*' }}
-              onChange={handleImage}
+              inputProps={{ accept: 'image/png' }}
+              // onChange={handleImage}
               sx={{ width: 250, border: "none" }}
             />
-            {imageUrl && <img src={imageUrl} alt='img'  style={{ maxWidth: '0%', height: 'auto'}} />}
+            {/* {imageUrl && <img src={imageUrl} alt='img'  style={{ maxWidth: '0%', height: 'auto'}} />} */}
           </div>
           <Button
             sx={{ width: 150, p: 1.5, ml:22, mt:7 }}
             variant="outlined"
-            onClick={handleSubmit}
+            // onClick={handleSubmit}
           >
-            Submit
+            Save
+          </Button>
+          <Button
+            sx={{ width: 150, p: 1.5, ml:3, mt:7 }}
+            variant="outlined"
+            onClick={handleBack}
+          >
+            Back
           </Button>
         </form>
       </div>
@@ -239,4 +196,4 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
   )
 }
 
-export default AddUser
+export default EditUser

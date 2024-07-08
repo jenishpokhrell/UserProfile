@@ -15,6 +15,9 @@ const Navbar = () => {
                     <li className="m-5  cursor-pointer">
                        <Link to="/adduser">AddUser</Link>
                     </li>
+                    <li className="m-5  cursor-pointer">
+                       <Link to="/userslist">Users</Link>
+                    </li>
                 </ul>
             </nav>
         </div>
