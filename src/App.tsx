@@ -19,9 +19,9 @@ const App:React.FC = () => {
       <Navbar/>
       <div>
         <Routes>
-          <Route path='/' element={<Home users={users}/>}/>
-          <Route path='/adduser' element={<AddUser onSubmit={handleUser}/>} />
-          <Route path='/userslist' element={<UsersList users={users}/>} />
+          <Route path='/' element={<Home users={users} setUsers={setUsers}/>}/>
+          <Route path='/adduser' element={<AddUser onSubmit={handleUser} users={users} setUsers={setUsers}/>} />
+          <Route path='/userslist' element={<UsersList users={users} setUsers={setUsers}/>} />
           <Route path='/edituser' element={<EditUser/>}/>
         </Routes>
       </div>

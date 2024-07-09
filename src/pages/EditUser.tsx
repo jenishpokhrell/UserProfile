@@ -4,14 +4,15 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom";
 
-const EditUser = () => {
 
+const EditUser: React.FC = () => {
+
+  const redirect = useNavigate()
   const [loading, setLoading] = useState(true)
   const [countries, setCountries] = useState([])
   const [selectedCountry, setSelectedCountry] = useState('Nepal');
   const [isDisabled, setIsDisabled] = useState(false)
 
-  const redirect = useNavigate()
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -29,23 +30,29 @@ const EditUser = () => {
     fetchCountries()
   }, [])
 
-  const handleChange = (event) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selected = event.target.value;
     setSelectedCountry(selected);
     setIsDisabled(selected !== 'Nepal');
+  }
+  
+  const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    
+  }
+
+  const handleSubmit = (event: React.FormEvent) => {
   }
 
   const handleBack = () => {
     redirect('/')
   }
-
   return (
     <div>
       <div className='text-center text-3xl font-bold m-10'>
         <h1>Edit User</h1>
       </div>
       <div>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className=" ml-40">
             <TextField
               margin="normal"
@@ -55,7 +62,7 @@ const EditUser = () => {
               name="firstName"
               variant="outlined"
               // value={user?.firstName}
-              // onChange={changeHandler} 
+              onChange={changeHandler} 
               required />
             <TextField
               margin="normal"
@@ -65,7 +72,7 @@ const EditUser = () => {
               name="lastName"
               variant="outlined"
               // value={user?.lastName}
-              // onChange={changeHandler} 
+              onChange={changeHandler} 
               required />
             <TextField
               margin="normal"
@@ -75,7 +82,7 @@ const EditUser = () => {
               name="email"
               variant="outlined"
               // value={user?.email}
-              // onChange={changeHandler} 
+              onChange={changeHandler} 
               required />
             <TextField
               margin="normal"
@@ -85,7 +92,7 @@ const EditUser = () => {
               name="phoneNo"
               variant="outlined"
               // value={user?.phoneNo}
-              // onChange={changeHandler} 
+              onChange={changeHandler} 
               required />
             <TextField
               margin="normal"
@@ -95,7 +102,7 @@ const EditUser = () => {
               name="birthDate"
               variant="outlined"
               // value={user?.birthDate}
-              // onChange={changeHandler} 
+              onChange={changeHandler} 
               required />
           </div>
           <div className=" flex ml-40">
@@ -109,7 +116,7 @@ const EditUser = () => {
                 name="city"
                 variant="outlined"
                 // value={user?.city}
-                // onChange={changeHandler} 
+                onChange={changeHandler} 
                 required />
               <TextField
                 margin="normal"
@@ -119,7 +126,7 @@ const EditUser = () => {
                 name="district"
                 variant="outlined"
                 // value={user?.district}
-                // onChange={changeHandler} 
+                onChange={changeHandler} 
                 required />
             </div>
             <div className=" flex justify-center items-center">
@@ -131,7 +138,7 @@ const EditUser = () => {
                   name='province'
                   // value={user.province}
                   label="Option"
-                  // onChange={changeHandler}
+                  onChange={changeHandler}
                 >
                   <MenuItem value="1">1</MenuItem>
                   <MenuItem value='2'>2</MenuItem>
@@ -153,7 +160,7 @@ const EditUser = () => {
                     name='country'
                     // value={user.country}
                     label="Country"
-                    // onChange={handleChange}
+                    onChange={handleChange}
                   >
                     {countries.map((country) => (
                       <MenuItem key={country.cca3} value={country.name.common}>
@@ -179,7 +186,7 @@ const EditUser = () => {
           <Button
             sx={{ width: 150, p: 1.5, ml:22, mt:7 }}
             variant="outlined"
-            // onClick={handleSubmit}
+            onClick={handleSubmit}
           >
             Save
           </Button>

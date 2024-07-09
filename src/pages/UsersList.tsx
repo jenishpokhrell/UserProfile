@@ -1,11 +1,20 @@
-import m5 from '../assets/m5.jpg'
+import { SetStateAction, useEffect } from 'react';
 import { IUsers } from '../types/global.typing';
 
 interface UsersListProps {
   users: IUsers[];
+  setUsers: React.Dispatch<SetStateAction<IUsers[]>>
 }
 
-const UsersList: React.FC<UsersListProps> = ({ users }) => {
+const UsersList: React.FC<UsersListProps> = ({ users, setUsers }) => {
+
+  useEffect(() => {
+    const savedUsers = localStorage.getItem('users');
+    if(savedUsers){
+      setUsers(JSON.parse(savedUsers))
+    }
+  }, [setUsers])
+
   return (
     <div>
       <div className='m-10'>
@@ -38,26 +47,3 @@ const UsersList: React.FC<UsersListProps> = ({ users }) => {
 }
 
 export default UsersList
-
-
-
-{/* <h1 className='text-3xl font-bold'>{user.firstName} {user.lastName}</h1>
-<p><span>Email:</span> {user.email}</p>
-<p><span>Contact no.:</span> {user.phoneNo}</p>
-<h3 className='text-2xl font-bold'>Address</h3>
-<p> <span>City:</span> {user.city}</p>
-<p><span>State:</span> {user.district}</p>
-<p><span>Province:</span> {user.province}</p>
-<p><span>Country:</span> {user.country}</p> */}
-
-
-{/* <h1 className='text-3xl font-bold'>Jessica Parker</h1>
-              <p><span>Email:</span>jessica1@gmail.com</p>
-              <p><span>Contact no.:</span>9876334211</p>
-              <h3 className='text-2xl font-bold'>Address</h3>
-              <p> <span>City:</span> Gwarko</p>
-              <p><span>State:</span> Lalitpur</p>
-              <p><span>Province:</span> 3</p>
-              <p><span>Country:</span>Nepal</p> 
-                              <img src={m5} alt="" style={{ width: '100%', height: 'auto', padding: '30px' }} />
-*/}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { SetStateAction } from 'react'
 import { FormControl, TextField, InputLabel, Select, MenuItem, FormHelperText, Menu, CircularProgress, Button, Input } from "@mui/material"
 import axios from "axios";
 import { useEffect, useState } from "react"
@@ -8,9 +8,11 @@ import Swal from "sweetalert2";
 
 interface UserForm {
   onSubmit: (user: IUsers) => void;
+  users: IUsers[];
+  setUsers: React.Dispatch<SetStateAction<IUsers[]>>;
 }
 
-const AddUser:React.FC<UserForm> = ({onSubmit}) => {
+const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
   const [user, setUser] = useState<IUsers>({
     imageUrl: '',
     firstName: '',
@@ -23,12 +25,10 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
     province: '',
     country: 'Nepal',
   });
-
   const [countries, setCountries] = useState<{ name: { common: string }; cca3: string }[]>([]);
   const [selectedCountry, setSelectedCountry] = useState('Nepal');
   const [loading, setLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false)
-  const [image, setImage] = useState(null)
   const [imageUrl, setImageUrl] = useState('')
   const redirect = useNavigate()
 
@@ -46,10 +46,15 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
         setLoading(false)
       }
     }
-    fetchCountries()
-  }, [])
+    fetchCountries();
 
-  const handleChange = (event) => {
+    const savedUsers = localStorage.getItem('users');
+    if(savedUsers){
+      setUsers(JSON.parse(savedUsers));
+    }
+  }, [setUsers])
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selected = event.target.value;
     setSelectedCountry(selected);
     setIsDisabled(selected !== 'Nepal');
@@ -60,12 +65,14 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
   }
 
   const handleImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files[0];
+    const file = event.target.files?.[0];
     if (file) {
-      setImage(file)
-      const imageUrl = (URL.createObjectURL(file))
-      setImageUrl(imageUrl);
-      setUser({...user, imageUrl})
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImageUrl(reader.result as string);
+        setUser({...user, imageUrl: reader.result as string})
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -76,6 +83,7 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
     })
   }
   const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     if (user.firstName === '' || user.lastName === '' || user.email === '' || user.phoneNo === '') {
       Swal.fire({
         icon: "error",
@@ -84,7 +92,9 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
       });
       return;
     }
-    event.preventDefault();
+    const newUsers = [...users, user];
+    setUsers(newUsers);
+    localStorage.setItem('users', JSON.stringify(newUsers))
     onSubmit(user);
     setUser({
       imageUrl: '', firstName: '', lastName: '', email: '', phoneNo: '', birthDate: '', city: '', district: '', province: '', country: 'Nepal',
@@ -147,6 +157,7 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
               sx={{ m: 2 }}
               id="outlined-basic"
               label="DOB"
+              placeholder='yyyy-mm-dd'
               name="birthDate"
               variant="outlined"
               value={user?.birthDate}
@@ -199,7 +210,7 @@ const AddUser:React.FC<UserForm> = ({onSubmit}) => {
                 {loading ? (
                   <CircularProgress />) : (
                   <Select
-                    sx={{ overflow: scroll }}
+                    sx = {{ overflow: scroll }}
                     name='country'
                     value={user.country}
                     label="Country"
