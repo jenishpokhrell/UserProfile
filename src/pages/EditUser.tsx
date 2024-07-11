@@ -2,17 +2,26 @@ import React from 'react'
 import { FormControl, TextField, InputLabel, Select, MenuItem, FormHelperText, Menu, CircularProgress, Button, Input } from "@mui/material"
 import axios from "axios";
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { IUsers } from '../types/global.typing';
+import Swal from 'sweetalert2';
 
+interface IEditUserProps{
+  users: IUsers[];
+  setUsers: React.Dispatch<React.SetStateAction<IUsers[]>>
+}
 
-const EditUser: React.FC = () => {
+const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
 
   const redirect = useNavigate()
+
+  const {email} = useParams<{email : string}>();
+  const [user, setUser] = useState<IUsers | null>(null);
   const [loading, setLoading] = useState(true)
   const [countries, setCountries] = useState([])
   const [selectedCountry, setSelectedCountry] = useState('Nepal');
   const [isDisabled, setIsDisabled] = useState(false)
-
+  const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -28,24 +37,80 @@ const EditUser: React.FC = () => {
       }
     }
     fetchCountries()
-  }, [])
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = event.target.value;
-    setSelectedCountry(selected);
-    setIsDisabled(selected !== 'Nepal');
+    const currentUser = users.find(user => user.email === decodeURIComponent(email))
+    console.log("Current user found: ", currentUser)
+    if(currentUser){
+      setUser(currentUser);
+      setSelectedCountry(currentUser.country);
+      setImageUrl(currentUser.imageUrl);
+    } 
+  }, [email, users])
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    if(user){
+      const selected = event.target.value;
+      setSelectedCountry(selected);
+      setIsDisabled(selected !== 'Nepal');
+      setUser({
+        ...user,
+        [event.target.name]: event.target.value
+      })
+    }
   }
   
+  const handleImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result as string);
+        if(user){
+          setUser({...user, imageUrl: reader.result as string})
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    
+    if(user){
+      setUser({
+        ...user,
+        [event.target.name]: event.target.value
+      })
+    }
   }
 
   const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if(user && user.firstName === '' || user.lastName === '' || user.email === '' || user.phoneNo === ''){
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "You need to enter required values.",
+      });
+      return;
+    }
+    if(user){
+      const updatedUsers = users.map(u => (u.email === user.email ? user : u))
+      setUsers(updatedUsers);
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+      redirect('/')
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'User Updated successfully',
+        showConfirmButton: false,
+        timer: 3000,
+      });
   }
-
+  }
   const handleBack = () => {
     redirect('/')
   }
+  if (!user) return <div>Loading...</div>;
+
   return (
     <div>
       <div className='text-center text-3xl font-bold m-10'>
@@ -61,7 +126,7 @@ const EditUser: React.FC = () => {
               label="First Name"
               name="firstName"
               variant="outlined"
-              // value={user?.firstName}
+              value={user.firstName}
               onChange={changeHandler} 
               required />
             <TextField
@@ -71,7 +136,7 @@ const EditUser: React.FC = () => {
               label="Last Name"
               name="lastName"
               variant="outlined"
-              // value={user?.lastName}
+              value={user.lastName}
               onChange={changeHandler} 
               required />
             <TextField
@@ -81,7 +146,7 @@ const EditUser: React.FC = () => {
               label="Email"
               name="email"
               variant="outlined"
-              // value={user?.email}
+              value={user.email}
               onChange={changeHandler} 
               required />
             <TextField
@@ -91,7 +156,7 @@ const EditUser: React.FC = () => {
               label="Phone no."
               name="phoneNo"
               variant="outlined"
-              // value={user?.phoneNo}
+              value={user.phoneNo}
               onChange={changeHandler} 
               required />
             <TextField
@@ -101,7 +166,7 @@ const EditUser: React.FC = () => {
               label="DOB"
               name="birthDate"
               variant="outlined"
-              // value={user?.birthDate}
+              value={user.birthDate}
               onChange={changeHandler} 
               required />
           </div>
@@ -115,7 +180,7 @@ const EditUser: React.FC = () => {
                 label="City"
                 name="city"
                 variant="outlined"
-                // value={user?.city}
+                value={user.city}
                 onChange={changeHandler} 
                 required />
               <TextField
@@ -125,7 +190,7 @@ const EditUser: React.FC = () => {
                 label="District/State"
                 name="district"
                 variant="outlined"
-                // value={user?.district}
+                value={user.district}
                 onChange={changeHandler} 
                 required />
             </div>
@@ -136,7 +201,7 @@ const EditUser: React.FC = () => {
                 <InputLabel> Province </InputLabel>
                 <Select
                   name='province'
-                  // value={user.province}
+                  value={user.province}
                   label="Option"
                   onChange={changeHandler}
                 >
@@ -158,7 +223,7 @@ const EditUser: React.FC = () => {
                   <Select
                     sx={{ overflow: scroll }}
                     name='country'
-                    // value={user.country}
+                    value={user.country}
                     label="Country"
                     onChange={handleChange}
                   >
@@ -178,10 +243,10 @@ const EditUser: React.FC = () => {
             <Input
               type="file"
               inputProps={{ accept: 'image/png' }}
-              // onChange={handleImage}
+              onChange={handleImage}
               sx={{ width: 250, border: "none" }}
             />
-            {/* {imageUrl && <img src={imageUrl} alt='img'  style={{ maxWidth: '0%', height: 'auto'}} />} */}
+            {imageUrl && <img src={imageUrl} alt='img'  style={{ maxWidth: '0%', height: 'auto'}} />}
           </div>
           <Button
             sx={{ width: 150, p: 1.5, ml:22, mt:7 }}

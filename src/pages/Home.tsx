@@ -2,6 +2,7 @@ import Button from '@mui/material/Button';
 import { IUsers } from '../types/global.typing'
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import Swal from 'sweetalert2';
 
 interface HomePageProps {
   users: IUsers[];
@@ -19,8 +20,31 @@ const Home: React.FC<HomePageProps> = ({ users, setUsers }) => {
     }
   }, [setUsers]);
 
-  const handleEdit = () => {
-    redirect('/edituser')
+  const handleEdit = (email: string) => {
+    redirect(`/edituser/${email}`)
+  }
+
+  const handleDelete = (email: string) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const updatedUsers = users.filter(user => user.email !== email)
+        setUsers(updatedUsers)
+        localStorage.setItem('users', JSON.stringify(updatedUsers))
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+      }
+    });
   }
 
   return (
@@ -59,8 +83,8 @@ const Home: React.FC<HomePageProps> = ({ users, setUsers }) => {
                       <td>{user.city}</td>
                       <td>{user.country}</td>
                       <td>
-                        <Button variant="outlined" sx={{ mx: 1 }} onClick={handleEdit}>Edit</Button>
-                        <Button variant="outlined" color="error">
+                        <Button variant="outlined" sx={{ mx: 1 }} onClick={() => handleEdit(user.email)}>Edit</Button>
+                        <Button variant="outlined" color="error" onClick={() => handleDelete(user.email)}>
                           Delete
                         </Button>
                       </td>

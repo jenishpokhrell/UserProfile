@@ -14,15 +14,16 @@ const App:React.FC = () => {
   const handleUser = (user: IUsers) => {
     setUsers([...users, user]);
   };
+
   return (
     <div>
       <Navbar/>
       <div>
         <Routes>
           <Route path='/' element={<Home users={users} setUsers={setUsers}/>}/>
-          <Route path='/adduser' element={<AddUser onSubmit={handleUser} users={users} setUsers={setUsers}/>} />
+          <Route path='/adduser' element= {<AddUser onSubmit={handleUser} users={users} setUsers={setUsers}/>}/>
           <Route path='/userslist' element={<UsersList users={users} setUsers={setUsers}/>} />
-          <Route path='/edituser' element={<EditUser/>}/>
+          <Route path='/edituser/:email' element={<EditUser users={users} setUsers={setUsers}/>}/>
         </Routes>
       </div>
     </div>

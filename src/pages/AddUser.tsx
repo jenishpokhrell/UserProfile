@@ -101,7 +101,7 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
     })
     redirect('/');
     Swal.fire({
-      position: "top-end",
+      position: "center",
       icon: "success",
       title: "User Created successfully",
       showConfirmButton: false,
