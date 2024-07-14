@@ -24,10 +24,10 @@ const Navbar = () => {
               <Link to="/" onClick={toggleNavbar}>Home</Link>
             </li>
             <li className="m-3 md:m-5 cursor-pointer">
-              <Link to="/adduser" onClick={toggleNavbar}>AddUser</Link>
+              <Link to="/AddUser" onClick={toggleNavbar}>AddUser</Link>
             </li>
             <li className="m-3 md:m-5 cursor-pointer">
-              <Link to="/userslist" onClick={toggleNavbar}>Users</Link>
+              <Link to="/UsersList" onClick={toggleNavbar}>Users</Link>
             </li>
           </ul>
         </nav>

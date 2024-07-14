@@ -21,7 +21,7 @@ const Home: React.FC<HomePageProps> = ({ users, setUsers }) => {
   }, [setUsers]);
 
   const handleEdit = (email: string) => {
-    redirect(`/edituser/${email}`)
+    redirect(`/EditUser/${email}`)
   }
 
   const handleDelete = (email: string) => {
