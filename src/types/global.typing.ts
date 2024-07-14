@@ -10,3 +10,9 @@ export interface IUsers{
     province: string;
     country: string;
 }
+export interface ICountry {
+    name: {
+      common: string;
+    };
+    cca3: string;
+  }

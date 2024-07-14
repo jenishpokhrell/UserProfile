@@ -1,9 +1,9 @@
 import React, { SetStateAction } from 'react'
-import { FormControl, TextField, InputLabel, Select, MenuItem, FormHelperText, Menu, CircularProgress, Button, Input } from "@mui/material"
+import { FormControl, TextField, InputLabel, Select, MenuItem, FormHelperText, CircularProgress, Button, Input, SelectChangeEvent } from "@mui/material"
 import axios from "axios";
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom";
-import { IUsers } from "../types/global.typing";
+import { useNavigate } from "react-router-dom";
+import { ICountry, IUsers } from "../types/global.typing";
 import Swal from "sweetalert2";
 
 interface UserForm {
@@ -25,8 +25,7 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
     province: '',
     country: 'Nepal',
   });
-  const { email } = useParams<{ email: string }>();
-  const [countries, setCountries] = useState<{ name: { common: string }; cca3: string }[]>([]);
+  const [countries, setCountries] = useState<ICountry[]>([]);
   const [selectedCountry, setSelectedCountry] = useState('Nepal');
   const [loading, setLoading] = useState(true);
   const [isDisabled, setIsDisabled] = useState(false)
@@ -37,7 +36,7 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await axios.get('https://restcountries.com/v3.1/all')
+        const response = await axios.get<ICountry[]>('https://restcountries.com/v3.1/all')
         const sortedCountries = response.data.sort((a, b) =>
           a.name.common.localeCompare(b.name.common));
         setCountries(sortedCountries);
@@ -55,15 +54,25 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
     }
   }, [setUsers])
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = event.target.value;
-    setSelectedCountry(selected);
-    setIsDisabled(selected !== 'Nepal');
-    setUser({
-      ...user,
-      [event.target.name]: event.target.value
-    })
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    if(user){
+      const selected = event.target.value;
+      setSelectedCountry(selected);
+      setIsDisabled(selected !== 'Nepal');
+      setUser({
+        ...user,
+        [event.target.name]: event.target.value
+      })
+    }
   }
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    if(user){
+      setUser({
+        ...user,
+        [event.target.name]: event.target.value
+      })
+    }
+  };
 
   const handleImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -107,7 +116,7 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
     localStorage.setItem('users', JSON.stringify(newUsers))
     onSubmit(user);
     setUser({
-      imageUrl: '', firstName: '', lastName: '', email: '', phoneNo: '', birthDate: '', city: '', district: '', province: '', country: 'Nepal',
+      imageUrl: '', firstName: '', lastName: '', email: '', phoneNo: '', birthDate: '', city: '', district: '', province: '', country: selectedCountry,
     })
     redirect('/');
     Swal.fire({
@@ -210,7 +219,7 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
                     name='province'
                     value={user.province}
                     label="Option"
-                    onChange={changeHandler}
+                    onChange={handleSelectChange}
                   >
                     <MenuItem value="">...</MenuItem>
                     <MenuItem value="1">1</MenuItem>
@@ -231,7 +240,6 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
                   {loading ? (
                     <CircularProgress />) : (
                     <Select
-                      sx={{ overflow: scroll }}
                       name='country'
                       value={user.country}
                       label="Country"

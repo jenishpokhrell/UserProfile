@@ -1,9 +1,9 @@
 import React from 'react'
-import { FormControl, TextField, InputLabel, Select, MenuItem, FormHelperText, Menu, CircularProgress, Button, Input } from "@mui/material"
+import { FormControl, TextField, InputLabel, Select, MenuItem, FormHelperText,CircularProgress, Button, Input, SelectChangeEvent } from "@mui/material"
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
-import { IUsers } from '../types/global.typing';
+import { IUsers, ICountry } from '../types/global.typing';
 import Swal from 'sweetalert2';
 
 interface IEditUserProps{
@@ -14,11 +14,10 @@ interface IEditUserProps{
 const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
 
   const redirect = useNavigate()
-
   const {email} = useParams<{email : string}>();
   const [user, setUser] = useState<IUsers | null>(null);
   const [loading, setLoading] = useState(true)
-  const [countries, setCountries] = useState([])
+  const [countries, setCountries] = useState<ICountry[]>([])
   const [selectedCountry, setSelectedCountry] = useState('Nepal');
   const [isDisabled, setIsDisabled] = useState(false)
   const [imageUrl, setImageUrl] = useState('');
@@ -26,7 +25,7 @@ const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
-        const response = await axios.get('https://restcountries.com/v3.1/all')
+        const response = await axios.get<ICountry[]>('https://restcountries.com/v3.1/all')
         const sortedCountries = response.data.sort((a, b) =>
           a.name.common.localeCompare(b.name.common));
         setCountries(sortedCountries);
@@ -47,7 +46,7 @@ const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
     } 
   }, [email, users])
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+  const handleChange = (event: SelectChangeEvent<string>) => {
     if(user){
       const selected = event.target.value;
       setSelectedCountry(selected);
@@ -59,6 +58,16 @@ const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
     }
   }
   
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+    if(user){
+      setUser({
+        ...user,
+        [event.target.name]: event.target.value
+      })
+    }
+  };
+  
+
   const handleImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -84,7 +93,7 @@ const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if(user && user.firstName === '' || user.lastName === '' || user.email === '' || user.phoneNo === ''){
+    if(user && user.firstName === '' || user?.lastName === '' || user?.email === '' || user?.phoneNo === ''){
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -93,6 +102,8 @@ const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
       return;
     }
     if(user){
+      const country = selectedCountry;
+      console.log(country)
       const updatedUsers = users.map(u => (u.email === user.email ? user : u))
       setUsers(updatedUsers);
       localStorage.setItem('users', JSON.stringify(updatedUsers));
@@ -203,7 +214,7 @@ const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
                     name='province'
                     value={user.province}
                     label="Option"
-                    onChange={changeHandler}
+                    onChange={handleSelectChange}
                   >
                     <MenuItem value="">...</MenuItem>
                     <MenuItem value="1">1</MenuItem>
@@ -224,7 +235,6 @@ const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
                   {loading ? (
                     <CircularProgress />) : (
                     <Select
-                      sx={{ overflow: scroll }}
                       name='country'
                       value={user.country}
                       label="Country"
@@ -263,7 +273,7 @@ const EditUser: React.FC<IEditUserProps> = ({users, setUsers}) => {
           <Button      
             sx={{ width: 150, p:1.5, ml:3}}
             variant="outlined"
-            onClick={handleSubmit}
+            onClick={handleBack}
           >
             Back
           </Button>
