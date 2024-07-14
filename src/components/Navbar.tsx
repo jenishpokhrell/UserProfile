@@ -13,7 +13,7 @@ const Navbar = () => {
 
   return (
     <div className='md:w-full md:h-20 bg-black text-white md:flex items-center md:pl-20 z-30'>
-        <div className='md:m-0 md:p-0 sm:ml-14 sm:p-5'>
+        <div className='md:m-0 md:p-0 sm:ml-6 sm:p-5'>
             <h1 className="md:text-4xl text-3xl font-bold">UDAT</h1>
         </div>
         

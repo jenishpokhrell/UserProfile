@@ -134,7 +134,7 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
       </div>
       <div>
         <form onSubmit={handleSubmit}>
-          <div className=" md:ml-24 sm:ml-20">
+          <div className=" md:ml-24 sm:ml-10">
             <TextField
             className='md:w-1/6 w-3/4'
               margin="normal"
@@ -187,7 +187,7 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
               value={user?.birthDate}
               onChange={changeHandler} required />
           </div>
-          <div className=" md:flex md:ml-24 sm:ml-20">
+          <div className=" md:flex md:ml-24 sm:ml-10">
             <div >
               <p className=" ml-4 text-2xl font-semibold ">Address</p>
               <TextField
@@ -212,8 +212,8 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
                 onChange={changeHandler} required />
             </div>
             <div className=" md:flex md:justify-center md:items-center">
-              <div className=' md:mt-12 md:ml-2 mt-5 ml-4'>
-                <FormControl sx={{ width: 300}}  disabled={isDisabled} required>
+              <div className=' md:mt-12 md:ml-2 mt-5 -ml-7'>
+                <FormControl sx={{ width: 280}}  disabled={isDisabled} required>
                   <InputLabel> Province </InputLabel>
                   <Select
                     name='province'
@@ -231,11 +231,11 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
                     <MenuItem value='7'>7</MenuItem>
                   </Select>
                   <FormHelperText
-                    sx={{ fontSize: 15, fontWeight: 'bold', color: 'red', fontStyle: 'italic' }}>*Only for people residing in Nepal</FormHelperText>
+                    sx={{ fontSize: 13, fontWeight: 'bold', color: 'red', fontStyle: 'italic' }}>*Only for people residing in Nepal</FormHelperText>
                 </FormControl>
               </div>
-              <div className='md:mt-11 md:ml-7 mt-5 ml-4'>
-                <FormControl sx={{ width: 300}} required>
+              <div className='md:mt-11 md:ml-7 mt-5 -ml-7'>
+                <FormControl sx={{ width: 280}} required>
                   <InputLabel> Country </InputLabel>
                   {loading ? (
                     <CircularProgress />) : (
@@ -257,7 +257,7 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
               </div>
             </div>
           </div>
-          <div className="md:ml-28 md:mt-10 sm:mt-5 sm:ml-24">
+          <div className="md:ml-28 md:mt-10 sm:mt-5 sm:ml-8">
             <p className=" text-2xl font-semibold mb-4">Your Image</p>
             <Input
               type="file"
@@ -267,7 +267,7 @@ const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
             />
             {imageUrl && <img src={imageUrl} alt='img' style={{ maxWidth: '0%', height: 'auto' }} />}
           </div>
-          <div className='md:ml-28 md:mt-10 mt-14 mb-16 ml-48'>
+          <div className='md:ml-28 md:mt-10 mt-14 mb-16 ml-20'>
           <Button      
             sx={{ width: 150, p:1.5}}
             variant="outlined"
