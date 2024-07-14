@@ -18,17 +18,17 @@ const UsersList: React.FC<UsersListProps> = ({ users, setUsers }) => {
   return (
     <div>
       <div className='m-10'>
-        <h1 className=' text-center text-4xl font-bold'>All Users</h1>
+        <h1 className='lg:text-center text-4xl lg:font-bold sm:font-bold sm:text-center'>All Users</h1>
       </div>
       {users.length === 0 ? (<h1 className='text-center text-4xl font-bold mt-32'>No Users</h1>) : (
 
         <div>
           {users.map((user, index) => (
-            <div key={index} className=' w-3/4 flex items-center rounded-tr-3xl relative left-44 my-10 shadow-2xl'>
-              <div className='w-2/4'>
+            <div key={index} className=' md:w-3/4 md:flex md:items-center rounded-tr-3xl md:relative md:left-44 my-10 shadow-2xl'>
+              <div className='md:w-2/4'>
                 {user.imageUrl && <img src={user.imageUrl} style={{ width: '100%', height: 'auto', padding: '30px' }} />}
               </div>
-              <div className=' px-10 text-2xl'>
+              <div className='px-10 py-5 text-2xl'>
                 <h1 className='text-3xl font-bold'>{user.firstName} {user.lastName}</h1>
                 <p><span>Email:</span> {user.email}</p>
                 <p><span>Contact no.:</span> {user.phoneNo}</p>

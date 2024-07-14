@@ -12,7 +12,7 @@ interface HomePageProps {
 const Home: React.FC<HomePageProps> = ({ users, setUsers }) => {
 
   const redirect = useNavigate();
-
+  
   useEffect(() => {
     const savedUsers = localStorage.getItem('users');
     if (savedUsers) {
@@ -83,8 +83,8 @@ const Home: React.FC<HomePageProps> = ({ users, setUsers }) => {
                       <td>{user.city}</td>
                       <td>{user.country}</td>
                       <td>
-                        <Button variant="outlined" sx={{ mx: 1 }} onClick={() => handleEdit(user.email)}>Edit</Button>
-                        <Button variant="outlined" color="error" onClick={() => handleDelete(user.email)}>
+                        <Button variant="outlined" className='button' sx={{mx:2}} onClick={() => handleEdit(user.email)}>Edit</Button>
+                        <Button variant="outlined" className='button' color="error" onClick={() => handleDelete(user.email)}>
                           Delete
                         </Button>
                       </td>

@@ -29,3 +29,30 @@ td,th{
 span{
   font-style: italic;
 }
+.table-wrapper th:nth-child(5),
+.table-wrapper td:nth-child(5) {
+  width: 15%; /* Adjust as needed */
+}
+
+@media screen and (max-width:600px) {
+  .table-wrapper{
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    border-radius: 0;
+  }
+  table{
+    margin-bottom: 10px;
+  }
+  td{  
+     .button{
+      margin: 5px;
+    }
+  }
+  td,th{
+    /* padding: 20px; */
+    max-width: max-content;
+    font-size: 14px;
+  }
+  
+}

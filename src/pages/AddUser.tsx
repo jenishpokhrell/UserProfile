@@ -2,7 +2,7 @@ import React, { SetStateAction } from 'react'
 import { FormControl, TextField, InputLabel, Select, MenuItem, FormHelperText, Menu, CircularProgress, Button, Input } from "@mui/material"
 import axios from "axios";
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IUsers } from "../types/global.typing";
 import Swal from "sweetalert2";
 
@@ -12,7 +12,7 @@ interface UserForm {
   setUsers: React.Dispatch<SetStateAction<IUsers[]>>;
 }
 
-const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
+const AddUser: React.FC<UserForm> = ({ onSubmit, users, setUsers }) => {
   const [user, setUser] = useState<IUsers>({
     imageUrl: '',
     firstName: '',
@@ -25,6 +25,7 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
     province: '',
     country: 'Nepal',
   });
+  const { email } = useParams<{ email: string }>();
   const [countries, setCountries] = useState<{ name: { common: string }; cca3: string }[]>([]);
   const [selectedCountry, setSelectedCountry] = useState('Nepal');
   const [loading, setLoading] = useState(true);
@@ -49,7 +50,7 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
     fetchCountries();
 
     const savedUsers = localStorage.getItem('users');
-    if(savedUsers){
+    if (savedUsers) {
       setUsers(JSON.parse(savedUsers));
     }
   }, [setUsers])
@@ -70,7 +71,7 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
       const reader = new FileReader();
       reader.onload = () => {
         setImageUrl(reader.result as string);
-        setUser({...user, imageUrl: reader.result as string})
+        setUser({ ...user, imageUrl: reader.result as string })
       };
       reader.readAsDataURL(file);
     }
@@ -92,6 +93,15 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
       });
       return;
     }
+    const emailExists = users.some(u => u.email === user.email)
+    if (emailExists) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "The email already exists",
+      });
+      return;
+    }
     const newUsers = [...users, user];
     setUsers(newUsers);
     localStorage.setItem('users', JSON.stringify(newUsers))
@@ -109,14 +119,15 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
     });
   }
   return (
-    <div>
+    <div className='md:w-full w-full'>
       <div className='text-center text-3xl font-bold m-10'>
         <h1>Add User</h1>
       </div>
       <div>
         <form onSubmit={handleSubmit}>
-          <div className=" ml-40">
+          <div className=" md:ml-24 sm:ml-20">
             <TextField
+            className='md:w-1/6 w-3/4'
               margin="normal"
               sx={{ m: 2 }}
               id="outlined-basic"
@@ -126,6 +137,7 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
               value={user?.firstName}
               onChange={changeHandler} required />
             <TextField
+            className='md:w-1/6 w-3/4'
               margin="normal"
               sx={{ m: 2 }}
               id="outlined-basic"
@@ -135,6 +147,7 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
               value={user?.lastName}
               onChange={changeHandler} required />
             <TextField
+            className='md:w-1/6 w-3/4'
               margin="normal"
               sx={{ m: 2 }}
               id="outlined-basic"
@@ -144,6 +157,7 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
               value={user?.email}
               onChange={changeHandler} required />
             <TextField
+            className='md:w-1/6 w-3/4'
               margin="normal"
               sx={{ m: 2 }}
               id="outlined-basic"
@@ -153,6 +167,7 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
               value={user?.phoneNo}
               onChange={changeHandler} required />
             <TextField
+            className='md:w-1/6 w-3/4'
               margin="normal"
               sx={{ m: 2 }}
               id="outlined-basic"
@@ -163,10 +178,11 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
               value={user?.birthDate}
               onChange={changeHandler} required />
           </div>
-          <div className=" flex ml-40">
-            <div>
+          <div className=" md:flex md:ml-24 sm:ml-20">
+            <div >
               <p className=" ml-4 text-2xl font-semibold ">Address</p>
               <TextField
+              className='md:w-[240px] w-3/4'
                 margin="normal"
                 sx={{ m: 2 }}
                 id="outlined-basic"
@@ -176,6 +192,7 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
                 value={user?.city}
                 onChange={changeHandler} required />
               <TextField
+              className='md:w-[240px] sm:w-3/4'
                 margin="normal"
                 sx={{ m: 2 }}
                 id="outlined-basic"
@@ -185,49 +202,54 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
                 value={user?.district}
                 onChange={changeHandler} required />
             </div>
-            <div className=" flex justify-center items-center">
-              <FormControl sx={{ mt: 6, ml: 2, width: 330 }} disabled={isDisabled} required>
-                <InputLabel> Province </InputLabel>
-                <Select
-                  name='province'
-                  value={user.province}
-                  label="Option"
-                  onChange={changeHandler}
-                >
-                  <MenuItem value="1">1</MenuItem>
-                  <MenuItem value='2'>2</MenuItem>
-                  <MenuItem value='3'>3</MenuItem>
-                  <MenuItem value='4'>4</MenuItem>
-                  <MenuItem value='5'>5</MenuItem>
-                  <MenuItem value='6'>6</MenuItem>
-                  <MenuItem value='7'>7</MenuItem>
-                </Select>
-                <FormHelperText
-                  sx={{ fontSize: 15, fontWeight: 'bold', color:'red',  fontStyle:'italic' }}>*Only for people residing in Nepal</FormHelperText>
-              </FormControl>
-              <FormControl sx={{ mt: 6, ml: 5, width: 330 }} required>
-                <InputLabel> Country </InputLabel>
-                {loading ? (
-                  <CircularProgress />) : (
+            <div className=" md:flex md:justify-center md:items-center">
+              <div className=' md:mt-12 md:ml-2 mt-5 ml-4'>
+                <FormControl sx={{ width: 300}}  disabled={isDisabled} required>
+                  <InputLabel> Province </InputLabel>
                   <Select
-                    sx = {{ overflow: scroll }}
-                    name='country'
-                    value={user.country}
-                    label="Country"
-                    onChange={handleChange}
+                    name='province'
+                    value={user.province}
+                    label="Option"
+                    onChange={changeHandler}
                   >
-                    {countries.map((country) => (
-                      <MenuItem key={country.cca3} value={country.name.common}>
-                        {country.name.common}
-                      </MenuItem>
-                    ))}
+                    <MenuItem value="">...</MenuItem>
+                    <MenuItem value="1">1</MenuItem>
+                    <MenuItem value='2'>2</MenuItem>
+                    <MenuItem value='3'>3</MenuItem>
+                    <MenuItem value='4'>4</MenuItem>
+                    <MenuItem value='5'>5</MenuItem>
+                    <MenuItem value='6'>6</MenuItem>
+                    <MenuItem value='7'>7</MenuItem>
                   </Select>
-                )}
-                <FormHelperText>Select your country</FormHelperText>
-              </FormControl>
+                  <FormHelperText
+                    sx={{ fontSize: 15, fontWeight: 'bold', color: 'red', fontStyle: 'italic' }}>*Only for people residing in Nepal</FormHelperText>
+                </FormControl>
+              </div>
+              <div className='md:mt-11 md:ml-7 mt-5 ml-4'>
+                <FormControl sx={{ width: 300}} required>
+                  <InputLabel> Country </InputLabel>
+                  {loading ? (
+                    <CircularProgress />) : (
+                    <Select
+                      sx={{ overflow: scroll }}
+                      name='country'
+                      value={user.country}
+                      label="Country"
+                      onChange={handleChange}
+                    >
+                      {countries.map((country) => (
+                        <MenuItem key={country.cca3} value={country.name.common}>
+                          {country.name.common}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                  <FormHelperText>Select your country</FormHelperText>
+                </FormControl>
+              </div>
             </div>
           </div>
-          <div className="ml-44 mt-10">
+          <div className="md:ml-28 md:mt-10 sm:mt-5 sm:ml-24">
             <p className=" text-2xl font-semibold mb-4">Your Image</p>
             <Input
               type="file"
@@ -235,15 +257,17 @@ const AddUser: React.FC<UserForm> = ({onSubmit, users, setUsers}) => {
               onChange={handleImage}
               sx={{ width: 250, border: "none" }}
             />
-            {imageUrl && <img src={imageUrl} alt='img'  style={{ maxWidth: '0%', height: 'auto'}} />}
+            {imageUrl && <img src={imageUrl} alt='img' style={{ maxWidth: '0%', height: 'auto' }} />}
           </div>
-          <Button
-            sx={{ width: 150, p: 1.5, ml:22, mt:7 }}
+          <div className='md:ml-28 md:mt-10 mt-14 mb-16 ml-48'>
+          <Button      
+            sx={{ width: 150, p:1.5}}
             variant="outlined"
             onClick={handleSubmit}
           >
             Submit
           </Button>
+          </div>
         </form>
       </div>
     </div>
